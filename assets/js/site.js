@@ -106,7 +106,6 @@
     });
   }
   bindToggle('.accolade', '.accolades');
-  bindToggle('.mcall', '.mcalls');
   bindToggle('.hotspot', '.aerial');
 
   /* --- lightbox ---------------------------------------------------------- */
