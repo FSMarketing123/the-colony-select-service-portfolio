@@ -110,7 +110,10 @@
   bindToggle('.hotspot', '.aerial');
 
   /* --- lightbox ---------------------------------------------------------- */
-  var figs = Array.prototype.slice.call(document.querySelectorAll('button[data-full]'));
+  // navigation list excludes the marquee's clone set; clicks on a clone are
+  // resolved back to the original by image path
+  var figs = Array.prototype.slice.call(document.querySelectorAll('button[data-full]:not([data-clone])'));
+  var allTriggers = Array.prototype.slice.call(document.querySelectorAll('button[data-full]'));
   var lb = document.querySelector('.lightbox');
 
   if (lb && figs.length) {
@@ -146,8 +149,14 @@
       if (lastFocus) lastFocus.focus();
     }
 
-    figs.forEach(function (f, i) {
-      f.addEventListener('click', function () { open(i); });
+    allTriggers.forEach(function (t) {
+      t.addEventListener('click', function () {
+        var i = figs.indexOf(t);
+        if (i < 0) {
+          i = figs.findIndex(function (f) { return f.dataset.full === t.dataset.full; });
+        }
+        open(i < 0 ? 0 : i);
+      });
     });
     lb.querySelector('.lightbox__close').addEventListener('click', close);
     lb.querySelector('.lightbox__nav--prev').addEventListener('click', function () { show(idx - 1); });
