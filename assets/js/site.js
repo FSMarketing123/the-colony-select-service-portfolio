@@ -31,6 +31,32 @@
     targets.forEach(function (t) { spy.observe(t); });
   }
 
+  /* --- soft hero parallax ------------------------------------------------ */
+  // .hero__bg is 126% tall with -13% offset, so it can drift 13% of the hero
+  // height either way without an edge ever showing. FACTOR stays under that.
+  var heroBg = document.querySelector('.hero__bg');
+  var heroEl = document.querySelector('.hero');
+  if (heroBg && heroEl && !reduce) {
+    var FACTOR = 0.12;
+    var parallaxQueued = false;
+
+    function paintParallax() {
+      parallaxQueued = false;
+      var y = window.scrollY || window.pageYOffset || 0;
+      if (y > heroEl.offsetHeight) return;          // hero is off-screen
+      heroBg.style.transform = 'translate3d(0,' + (y * FACTOR).toFixed(2) + 'px,0)';
+    }
+    function queueParallax() {
+      if (!parallaxQueued) {
+        parallaxQueued = true;
+        requestAnimationFrame(paintParallax);
+      }
+    }
+    paintParallax();
+    window.addEventListener('scroll', queueParallax, { passive: true });
+    window.addEventListener('resize', queueParallax);
+  }
+
   /* --- reveal on scroll -------------------------------------------------- */
   var revealables = document.querySelectorAll('.rv, .demand, .accolades');
   if ('IntersectionObserver' in window && !reduce) {
@@ -87,26 +113,6 @@
       minimumFractionDigits: decimals, maximumFractionDigits: decimals
     }) : n;
   }
-
-  /* --- expandable tiles (accolades, metro call-outs, hotspots) ---------- */
-  function bindToggle(selector, exclusiveWithin) {
-    Array.prototype.forEach.call(document.querySelectorAll(selector), function (btn) {
-      btn.addEventListener('click', function () {
-        var open = btn.getAttribute('aria-expanded') === 'true';
-        if (exclusiveWithin) {
-          var group = btn.closest(exclusiveWithin);
-          if (group) {
-            Array.prototype.forEach.call(group.querySelectorAll('[aria-expanded="true"]'), function (o) {
-              if (o !== btn) o.setAttribute('aria-expanded', 'false');
-            });
-          }
-        }
-        btn.setAttribute('aria-expanded', open ? 'false' : 'true');
-      });
-    });
-  }
-  bindToggle('.accolade', '.accolades');
-  bindToggle('.hotspot', '.aerial');
 
   /* --- lightbox ---------------------------------------------------------- */
   // navigation list excludes the marquee's clone set; clicks on a clone are
