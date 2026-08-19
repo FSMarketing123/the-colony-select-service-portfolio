@@ -103,7 +103,6 @@ ul{ padding:0; list-style:none; }
 
 .rule{ height:1px; background:var(--hair); border:0; }
 .rule--light{ background:var(--hair-light); }
-.rule--gold{ height:2px; width:52px; background:var(--gold); border:0; }
 
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px;
@@ -140,8 +139,7 @@ ul{ padding:0; list-style:none; }
 .sechead{ margin-bottom:clamp(26px,3vw,46px); }
 .sechead .eyebrow{ margin-bottom:14px; }
 .sechead h2{ max-width:none; }
-.sechead .rule--gold{ margin-top:20px; }
-
+.sechead 
 /* =========================================================================
    TOP BAR
    ========================================================================= */
@@ -856,9 +854,15 @@ button.fig:hover .fig__zoom,button.fig:focus-visible .fig__zoom{ opacity:1; tran
   grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);
   align-items:start;
 }
-/* IH 06 keeps its card centred against the stack; the media sits in the
-   first column there, so mirror the ratio to keep image sizes consistent */
-.closing--flip{ align-items:start; grid-template-columns:minmax(0,1.12fr) minmax(0,1fr); }
+/* IH 05 / IH 07 — equal columns, heading sitting in the first one */
+.closing--even{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+/* IH 06: media sits in the first column, so mirror the ratio; the card
+   stretches to that column's full height, flush top and bottom */
+.closing--flip{ align-items:stretch; grid-template-columns:minmax(0,1.12fr) minmax(0,1fr); }
+.closing--flip > .rv:not(.closing__media){ display:flex; }
+.closing--flip .card-panel{
+  flex:1; display:flex; flex-direction:column; justify-content:center;
+}
 .closing--flip > .closing__media{ order:-1; }
 @media (max-width:920px){ .closing{ grid-template-columns:1fr; } .closing--flip > .closing__media{ order:0; } }
 .closing__media{ display:grid; gap:clamp(12px,1.6vw,20px); grid-template-columns:minmax(0,1fr); align-content:start; }
