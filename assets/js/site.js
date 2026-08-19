@@ -110,12 +110,15 @@
   bindToggle('.hotspot', '.aerial');
 
   /* --- lightbox ---------------------------------------------------------- */
-  var figs = Array.prototype.slice.call(document.querySelectorAll('button.fig[data-full]'));
+  var figs = Array.prototype.slice.call(document.querySelectorAll('button[data-full]'));
   var lb = document.querySelector('.lightbox');
 
   if (lb && figs.length) {
     var lbImg = lb.querySelector('img');
-    var lbCap = lb.querySelector('.lightbox__cap');
+    var lbFig = lb.querySelector('.lightbox__fig');
+    var lbHotel = lb.querySelector('.lightbox__hotel');
+    var lbTitle = lb.querySelector('.lightbox__title');
+    var lbBlurb = lb.querySelector('.lightbox__blurb');
     var idx = 0;
     var lastFocus = null;
 
@@ -124,7 +127,11 @@
       var f = figs[idx];
       lbImg.src = f.dataset.full;
       lbImg.alt = f.dataset.alt || '';
-      lbCap.textContent = f.dataset.caption || '';
+      lbHotel.textContent = f.dataset.hotel || '';
+      lbTitle.textContent = f.dataset.caption || '';
+      lbBlurb.textContent = f.dataset.blurb || '';
+      // no blurb (the property grids) -> caption-only layout
+      lbFig.classList.toggle('lightbox__fig--plain', !f.dataset.blurb);
     }
     function open(i) {
       lastFocus = document.activeElement;

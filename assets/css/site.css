@@ -462,11 +462,46 @@ button.fig:hover .fig__zoom,button.fig:focus-visible .fig__zoom{ opacity:1; tran
   place-items:center; padding:clamp(16px,4vw,56px);
 }
 .lightbox.is-open{ display:grid; }
-.lightbox img{ max-width:min(1400px,100%); max-height:82vh; object-fit:contain; box-shadow:0 30px 80px rgba(0,0,0,.6); }
-.lightbox__cap{
-  margin-top:16px; text-align:center; color:rgba(255,255,255,.82);
-  font-size:11px; font-weight:600; letter-spacing:.2em; text-transform:uppercase;
+.lightbox__fig{
+  margin:0; display:grid; gap:0; align-items:stretch;
+  grid-template-columns:1fr; max-width:min(1180px,100%);
+  background:var(--ink-2); box-shadow:0 30px 80px rgba(0,0,0,.6);
 }
+@media (min-width:900px){
+  .lightbox__fig{ grid-template-columns:minmax(0,1fr) clamp(260px,24vw,340px); }
+}
+.lightbox img{
+  width:100%; height:100%; max-height:78vh; object-fit:cover; display:block;
+  box-shadow:none;
+}
+@media (max-width:899px){ .lightbox img{ max-height:52vh; } }
+.lightbox__info{
+  padding:clamp(22px,2.6vw,34px);
+  display:flex; flex-direction:column; justify-content:center; gap:2px;
+  background:var(--ink-2); color:var(--txt-invert);
+}
+.lightbox__hotel{
+  font-size:clamp(8.5px,.2vw + 8px,10px); font-weight:700; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--gold);
+}
+.lightbox__title{
+  margin-top:12px; font-size:clamp(17px,.8vw + 13px,24px); font-weight:600; line-height:1.25;
+  color:#fff;
+}
+.lightbox__blurb{
+  margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,.18);
+  font-size:14px; line-height:1.7; color:rgba(255,255,255,.78);
+}
+.lightbox__hotel:empty,.lightbox__title:empty,.lightbox__blurb:empty{ display:none; }
+/* property figures carry a caption but no blurb — collapse to a single column
+   with the caption centred beneath the image */
+.lightbox__fig--plain{ grid-template-columns:1fr !important; }
+.lightbox__fig--plain .lightbox__info{ text-align:center; padding-block:clamp(14px,1.6vw,20px); }
+.lightbox__fig--plain .lightbox__title{
+  margin-top:0; font-size:clamp(11px,.2vw + 10.4px,12.5px); font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.86);
+}
+.lightbox__fig--plain img{ max-height:76vh; object-fit:contain; }
 .lightbox__close{
   position:absolute; top:clamp(12px,2vw,26px); right:clamp(12px,2vw,26px);
   width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.3);
@@ -499,23 +534,16 @@ button.fig:hover .fig__zoom,button.fig:focus-visible .fig__zoom{ opacity:1; tran
 .gallery{ background:var(--ink-deep); }
 .gridywrap{
   width:100%; display:grid; gap:0;
-  grid-template-columns:1fr;
-  grid-auto-rows:260px;
-  grid-auto-flow:row dense;
+  grid-template-columns:repeat(2,1fr);
 }
-.gridywrap div[class*=gridy]{ position:relative; overflow:hidden; background:var(--ink-deep); }
-.gridywrap .gridy-1,.gridywrap .gridy-2,.gridywrap .gridy-3{ grid-column:span 1; }
-.gridywrap .gridyhe-1,.gridywrap .gridyhe-2{ grid-row:span 1; }
-@media (min-width:640px){
-  .gridywrap{ grid-template-columns:repeat(2,1fr); grid-auto-rows:290px; }
-  .gridywrap .gridy-2,.gridywrap .gridy-3{ grid-column:span 2; }
+/* every tile is square, so no image is ever shown at a wide ratio */
+.gridywrap div[class*=gridy]{
+  position:relative; overflow:hidden; background:var(--ink-deep);
+  aspect-ratio:1 / 1; grid-column:span 1; grid-row:span 1;
 }
-@media (min-width:1024px){
-  .gridywrap{ grid-template-columns:repeat(3,1fr); grid-auto-rows:clamp(280px,23vw,340px); }
-  .gridywrap .gridy-2{ grid-column:span 2; }
-  .gridywrap .gridy-3{ grid-column:span 3; }
-  .gridywrap .gridyhe-2{ grid-row:span 2; }
-}
+@media (min-width:680px){ .gridywrap{ grid-template-columns:repeat(3,1fr); } }
+/* 12 tiles / 4 columns = exactly three rows */
+@media (min-width:1024px){ .gridywrap{ grid-template-columns:repeat(4,1fr); } }
 .gridywrap .gridimg{
   position:absolute; inset:0; overflow:hidden;
   background-position:center center; background-size:cover; background-repeat:no-repeat;
@@ -526,12 +554,22 @@ button.fig:hover .fig__zoom,button.fig:focus-visible .fig__zoom{ opacity:1; tran
 .gridywrap .gridinfo{
   position:absolute; inset:0; width:100%; height:100%;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:0; padding:clamp(16px,2vw,28px);
+  gap:0; padding:clamp(16px,2vw,28px) clamp(14px,1.6vw,22px) clamp(44px,5vw,56px);
   border:0; cursor:pointer; text-align:center;
   background:rgba(24,22,20,.30);
   transition:background .7s var(--ease);
 }
 .gridywrap .gridinfo:hover,.gridywrap .gridinfo:focus-visible{ background:rgba(86,119,143,.74); }
+
+.gridywrap .gridcap{
+  position:absolute; inset:auto 0 0 0; z-index:3; pointer-events:none;
+  padding:8px 12px; text-align:center;
+  font-size:clamp(8px,.2vw + 7.4px,10px); font-weight:700; letter-spacing:.15em;
+  text-transform:uppercase; color:#fff; line-height:1.5;
+}
+.gridywrap .gridcap--slate{ background:rgba(86,119,143,.90); }
+.gridywrap .gridcap--brown{ background:rgba(91,86,79,.92); }
+.gridywrap .gridcap--deep{ background:rgba(70,101,124,.92); }
 
 .gridywrap .gridtitle{
   position:relative; padding-bottom:20px;
