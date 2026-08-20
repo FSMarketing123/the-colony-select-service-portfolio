@@ -114,6 +114,80 @@
     }) : n;
   }
 
+  /* --- annotated aerial: click to zoom, move to pan ---------------------- */
+  // transform is `scale(Z) translate(tx%,ty%)`, so translate happens in the
+  // element's own space and is then scaled: a shift of tx% moves the image
+  // tx% * width * Z on screen. Clamping |tx| to 100*(Z-1)/(2Z) keeps the
+  // scaled image covering the frame, so an edge can never be exposed.
+  var aerial = document.querySelector('.aerial--zoom');
+  if (aerial) {
+    var aImg = aerial.querySelector('img');
+    var Z = 2.5;
+    var LIMIT = 100 * (Z - 1) / (2 * Z);
+    var zoomed = false, tx = 0, ty = 0, panTimer = null;
+
+    function paint(scale) {
+      aImg.style.transform = 'scale(' + scale + ') translate(' + tx.toFixed(2) + '%,' + ty.toFixed(2) + '%)';
+    }
+    function clamp(v) { return Math.max(-LIMIT, Math.min(LIMIT, v)); }
+    function pointOf(e) {
+      var r = aerial.getBoundingClientRect();
+      return { nx: (e.clientX - r.left) / r.width, ny: (e.clientY - r.top) / r.height };
+    }
+    function focusOn(nx, ny) {
+      tx = clamp(-(nx - 0.5) * 100);
+      ty = clamp(-(ny - 0.5) * 100);
+    }
+    function zoomIn(nx, ny) {
+      zoomed = true;
+      aerial.classList.add('is-zoomed');
+      aerial.setAttribute('aria-pressed', 'true');
+      focusOn(nx, ny);
+      paint(Z);
+    }
+    function zoomOut() {
+      zoomed = false;
+      aerial.classList.remove('is-zoomed', 'is-panning');
+      aerial.setAttribute('aria-pressed', 'false');
+      tx = ty = 0;
+      paint(1);
+    }
+
+    aerial.addEventListener('click', function (e) {
+      if (zoomed) return zoomOut();
+      // keyboard activation reports no coordinates — zoom to the centre
+      if (e.clientX === 0 && e.clientY === 0) zoomIn(0.5, 0.5);
+      else { var p = pointOf(e); zoomIn(p.nx, p.ny); }
+    });
+
+    aerial.addEventListener('pointermove', function (e) {
+      if (!zoomed) return;
+      aerial.classList.add('is-panning');
+      if (panTimer) clearTimeout(panTimer);
+      panTimer = setTimeout(function () { aerial.classList.remove('is-panning'); }, 240);
+      var p = pointOf(e);
+      focusOn(p.nx, p.ny);
+      paint(Z);
+    }, { passive: true });
+
+    // leaving the frame or tabbing away returns it, so the page never scrolls
+    // on with a half-panned aerial
+    aerial.addEventListener('pointerleave', function () { if (zoomed) zoomOut(); });
+    aerial.addEventListener('blur', function () { if (zoomed) zoomOut(); });
+
+    aerial.addEventListener('keydown', function (e) {
+      if (!zoomed) return;
+      var step = 8, moved = true;
+      if (e.key === 'ArrowLeft')       tx = clamp(tx + step);
+      else if (e.key === 'ArrowRight') tx = clamp(tx - step);
+      else if (e.key === 'ArrowUp')    ty = clamp(ty + step);
+      else if (e.key === 'ArrowDown')  ty = clamp(ty - step);
+      else if (e.key === 'Escape')     return zoomOut();
+      else moved = false;
+      if (moved) { e.preventDefault(); paint(Z); }
+    });
+  }
+
   /* --- lightbox ---------------------------------------------------------- */
   // navigation list excludes the marquee's clone set; clicks on a clone are
   // resolved back to the original by image path
