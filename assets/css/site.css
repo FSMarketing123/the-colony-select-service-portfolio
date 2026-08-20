@@ -336,7 +336,13 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
   content:''; position:absolute; left:0; top:22%; bottom:22%; width:1px; background:var(--hair);
 }
 .statstrip__v{
-  display:block; font-size:clamp(24px,1.5vw + 16px,38px); font-weight:600; line-height:1;
+  /* word values ("Unencumbered", "Fee Simple") set at a smaller scale than the
+     numerals, so reserve the tall line box for every value and centre inside it
+     — that keeps all four labels on a common baseline. */
+  --v-size:clamp(24px,1.5vw + 16px,38px);
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  min-height:calc(var(--v-size) * 1.1);   /* the numeral line box, exactly */
+  font-size:var(--v-size); font-weight:600; line-height:1.1;
   color:var(--slate-dark); letter-spacing:-.01em;
 }
 /* "Unencumbered" cannot wrap in a quarter-width cell */
