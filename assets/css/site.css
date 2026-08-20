@@ -241,7 +241,6 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
   .brandrow{ grid-template-columns:1fr; max-width:318px; margin-inline:auto; }
   /* trim the lockups' generous white margin so three stacked plates still fit */
   .brandbox img{ aspect-ratio:575/218; object-fit:cover; }
-  .bymarriott{ max-width:318px; margin-inline:auto; }
 }
 
 .brandbox{
@@ -253,17 +252,6 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
 .brandbox img{ width:100%; height:auto; }
 .brandbox:hover{ transform:translateY(-5px); box-shadow:0 26px 54px rgba(0,0,0,.44); }
 
-.bymarriott{
-  margin-top:clamp(8px,1vw,14px);
-  background:#fff; display:flex; align-items:center; justify-content:center;
-  gap:clamp(10px,1.4vw,20px); padding:clamp(12px,1.5vw,18px) 20px;
-  box-shadow:0 18px 40px rgba(0,0,0,.30);
-}
-.bymarriott span{
-  font-size:clamp(10px,.3vw + 9px,13px); font-weight:600; letter-spacing:.30em;
-  text-transform:uppercase; color:var(--ink-deep);
-}
-.bymarriott img{ width:clamp(96px,11vw,168px); filter:invert(1) brightness(.24); }
 
 .hero__foot{ position:absolute; left:0; right:0; bottom:clamp(22px,4vh,46px); }
 
