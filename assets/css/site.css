@@ -92,13 +92,15 @@ ul{ padding:0; list-style:none; }
   font-size:var(--fs-h3); font-weight:600; line-height:1.4;
   letter-spacing:.02em; text-transform:uppercase;
 }
-.prose p{ text-align:justify; text-justify:inter-word; hyphens:auto; }
+.prose p{ text-align:justify; text-justify:inter-word; hyphens:none; }
 .prose p + p{ margin-top:1.05em; }
 /* justification opens ugly rivers in narrow measures */
 @media (max-width:660px){
-  .prose p,.exec__close{ text-align:left; hyphens:none; }
+  .prose p,.exec__close{ text-align:left; }
 }
+html,body{ hyphens:none; -webkit-hyphens:none; }
 .prose strong{ font-weight:600; }
+.bu{ text-decoration:underline; text-underline-offset:2px; }
 .lead-bold{ font-weight:600; }
 
 .rule{ height:1px; background:var(--hair); border:0; }
@@ -137,6 +139,7 @@ ul{ padding:0; list-style:none; }
 
 /* section header block */
 .sechead{ margin-bottom:clamp(26px,3vw,46px); }
+.sechead--tight{ margin-bottom:clamp(14px,1.6vw,22px); }
 .sechead .eyebrow{ margin-bottom:14px; }
 .sechead h2{ max-width:none; }
 /* =========================================================================
@@ -307,6 +310,18 @@ ul{ padding:0; list-style:none; }
    ========================================================================= */
 .exec__prose{ max-width:960px; margin-inline:auto; }
 .exec__prose p{ font-size:clamp(15px,.5vw + 13.6px,17.5px); }
+.intro-list{
+  margin:1.05em 0 0; padding-left:0; list-style:none;
+  display:grid; gap:6px;
+}
+.intro-list li{
+  position:relative; padding-left:20px; text-align:left; font-weight:600; color:var(--ink-2);
+}
+.intro-list li::before{
+  content:''; position:absolute; left:2px; top:.72em;
+  width:5px; height:5px; border-radius:50%; background:var(--slate);
+}
+.intro-list + p{ margin-top:1.05em; }
 .exec__close{
   margin-top:1.4em; text-align:justify; font-weight:600; color:var(--ink-2);
 }
@@ -641,7 +656,7 @@ button.fig:hover .fig__zoom,button.fig:focus-visible .fig__zoom{ opacity:1; tran
 .accolade__v{
   font-size:clamp(26px,1.9vw + 16px,44px); font-weight:600; line-height:1;
   letter-spacing:-.015em; color:var(--slate-dark);
-  overflow-wrap:break-word; hyphens:auto; max-width:100%;
+  overflow-wrap:break-word; hyphens:none; max-width:100%;
 }
 .accolade__v--text{
   font-size:clamp(18px,.85vw + 14px,26px); line-height:1.15; letter-spacing:-.005em;
