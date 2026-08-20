@@ -353,20 +353,63 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
    ========================================================================= */
 .band{ position:relative; height:clamp(300px,46vw,620px); overflow:hidden; background:var(--ink-deep); }
 .band img{ width:100%; height:100%; object-fit:cover; }
-.band--divider{ height:clamp(300px,42vw,560px); display:grid; place-items:center; }
-.band--divider img{ position:absolute; inset:0; }
-.band--divider::after{
-  content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(20,18,17,.34),rgba(20,18,17,.20) 45%,rgba(20,18,17,.42));
+/* =========================================================================
+   GLASS IMAGE BAND
+   From the supplied "HWE Glass Image Band" template (extracted from the Hyatt
+   House Woodlands build). Tokens and values are the template's.
+   One deviation: the template renders the label as .imgband.label::after via
+   data-label. Here it is a real <h2> carrying the same declarations, so the
+   section keeps a heading in the document outline and the #highlights anchor
+   still points at one — visually identical.
+   ========================================================================= */
+:root{
+  --band-h-min:320px;
+  --band-h-fluid:46vw;
+  --band-h-max:560px;
+  --band-label-tint:rgba(40,35,31,.34);
+  --band-label-blur:4px;
+  --band-label-rule:rgba(255,255,255,.28);
+  --band-label-color:#fff;
+  --band-label-pad:22px 60px;
+  --band-fallback:#3a322d;
 }
-.band__pill{
-  position:relative; z-index:2;
-  background:rgba(255,255,255,.80); backdrop-filter:blur(16px) saturate(140%);
-  padding:clamp(16px,2vw,26px) clamp(30px,5vw,74px);
-  border-radius:20px; box-shadow:0 22px 60px rgba(0,0,0,.30);
+.imgband{
+  position:relative; z-index:1;
+  height:clamp(var(--band-h-min),var(--band-h-fluid),var(--band-h-max));
+  background-color:var(--band-fallback);
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+  display:grid; place-items:center;
 }
-.band__pill h2{
-  font-size:clamp(22px,2.4vw + 10px,46px); font-weight:700; letter-spacing:-.01em;
-  color:var(--ink-2); text-transform:none; line-height:1.1; white-space:nowrap;
+.imgband__label{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2;
+  margin:0;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-weight:300; font-size:clamp(30px,4.4vw,58px);
+  color:var(--band-label-color); letter-spacing:.01em; text-transform:none;
+  padding:var(--band-label-pad);
+  background:var(--band-label-tint);
+  -webkit-backdrop-filter:blur(var(--band-label-blur));
+          backdrop-filter:blur(var(--band-label-blur));
+  border-top:1px solid var(--band-label-rule);
+  border-bottom:1px solid var(--band-label-rule);
+  white-space:nowrap;
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .imgband__label{ background:rgba(40,35,31,.62); }
+}
+@media (max-width:560px){
+  .imgband__label{
+    max-width:calc(100vw - 32px); padding:16px 24px;
+    white-space:normal; text-align:center; line-height:1.12;
+  }
+}
+/* soften a busy photo under the plate */
+.imgband.scrim::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 18%,rgba(0,0,0,.22) 50%,rgba(0,0,0,0) 82%);
+}
+@media (prefers-reduced-motion:reduce){
+  .imgband{ transition:none !important; }
 }
 
 /* =========================================================================
