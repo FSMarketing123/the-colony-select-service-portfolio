@@ -704,10 +704,10 @@ button.fig:hover .fig__zoom,button.fig:focus-visible .fig__zoom{ opacity:1; tran
   position:relative; overflow:hidden; display:block; width:100%;
   padding:0; border:0; background:var(--ink-deep); box-shadow:var(--shadow-card);
 }
-/* the annotated aerial is 3158x2251 — match it exactly so object-fit never
+/* the annotated aerial is 3500x2460 — match it exactly so object-fit never
    crops the Grandscape block off the top or the hotel labels off the bottom */
 .aerial > img{
-  width:100%; aspect-ratio:3158 / 2251; object-fit:cover; display:block;
+  width:100%; aspect-ratio:3500 / 2460; object-fit:cover; display:block;
   transform-origin:center center;
   transition:transform .75s var(--ease);
   will-change:transform;
