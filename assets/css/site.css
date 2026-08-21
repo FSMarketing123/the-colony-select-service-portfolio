@@ -381,11 +381,14 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
   display:grid; place-items:center;
 }
 .imgband__label{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2;
-  margin:0;
-  font-family:'Cormorant Garamond',Georgia,serif;
-  font-weight:300; font-size:clamp(30px,4.4vw,58px);
-  color:var(--band-label-color); letter-spacing:.01em; text-transform:none;
+  /* the band is display:grid / place-items:center, so let it do the centring.
+     Absolute + left:50% capped the shrink-to-fit width at half the band, which
+     made the label wrap to three lines on phones. */
+  position:relative; z-index:2; margin:0;
+  max-width:calc(100% - 2 * clamp(16px,4vw,32px));
+  font-family:'Poppins','Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-weight:700; font-size:clamp(26px,3.6vw,46px);
+  color:var(--band-label-color); letter-spacing:-.005em; text-transform:none;
   padding:var(--band-label-pad);
   background:var(--band-label-tint);
   -webkit-backdrop-filter:blur(var(--band-label-blur));
@@ -399,8 +402,7 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
 }
 @media (max-width:560px){
   .imgband__label{
-    max-width:calc(100vw - 32px); padding:16px 24px;
-    white-space:normal; text-align:center; line-height:1.12;
+    padding:16px 24px; white-space:normal; text-align:center; line-height:1.12;
   }
 }
 /* soften a busy photo under the plate */
