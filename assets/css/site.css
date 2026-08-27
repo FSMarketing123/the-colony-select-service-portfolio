@@ -452,14 +452,14 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
   font-size:clamp(8.5px,.2vw + 8px,10px); font-weight:600; letter-spacing:.24em;
   text-transform:uppercase; color:rgba(255,255,255,.72);
 }
-.spec{ position:relative; z-index:2; padding-inline:clamp(16px,2vw,26px); }
+.spec{ position:relative; z-index:2; --spec-pad:clamp(16px,2vw,26px); padding-inline:var(--spec-pad); }
 .spec__row{
   display:grid; grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);
   gap:14px; padding:clamp(11px,1.3vw,15px) 0;
   border-top:1px solid var(--gold-soft);
   align-items:start;
 }
-.spec__row:first-child{ border-top:0; }
+.spec__row:first-child{ border-top-color:transparent; }
 .spec__k{
   font-size:clamp(9.5px,.22vw + 9px,11px); font-weight:600; letter-spacing:.13em;
   text-transform:uppercase; color:rgba(255,255,255,.95); line-height:1.7; padding-top:2px;
@@ -469,6 +469,39 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
 .spec__v ul li::before{
   content:''; position:absolute; left:2px; top:.72em; width:4px; height:4px; border-radius:50%;
   background:var(--gold);
+}
+
+/* snapshot row rollover: full-bleed tint, gold edge, brighter hairlines */
+.spec__row{ position:relative; }
+.spec__row::before,
+.spec__row::after{
+  content:''; position:absolute; pointer-events:none;
+  top:0; bottom:0; left:calc(-1 * var(--spec-pad));
+}
+.spec__row::before{
+  z-index:0; right:calc(-1 * var(--spec-pad));
+  background:linear-gradient(90deg,rgba(200,169,106,.34),rgba(255,255,255,.115) 42%,rgba(255,255,255,.07));
+  opacity:0; transition:opacity .35s var(--ease);
+}
+.spec__row::after{
+  z-index:1; width:3px; background:var(--gold);
+  transform:scaleY(0); transform-origin:50% 50%;
+  transition:transform .4s var(--ease);
+}
+.spec__k,.spec__v{
+  position:relative; z-index:1;
+  transition:color .35s var(--ease), transform .35s var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .spec__row:hover{ border-top-color:var(--gold); }
+  .spec__row:hover + .spec__row{ border-top-color:var(--gold); }
+  .spec__row:hover::before{ opacity:1; }
+  .spec__row:hover::after{ transform:scaleY(1); }
+  .spec__row:hover .spec__k{ color:#fff; transform:translateX(4px); }
+  .spec__row:hover .spec__v{ color:#fff; transform:translateX(4px); }
+}
+@media (prefers-reduced-motion:reduce){
+  .spec__row::before,.spec__row::after,.spec__k,.spec__v{ transition:none; }
 }
 
 /* =========================================================================
