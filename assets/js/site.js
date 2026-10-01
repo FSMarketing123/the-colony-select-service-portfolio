@@ -114,52 +114,34 @@
     }) : n;
   }
 
-  /* --- glass image band: eased parallax on hover ------------------------- */
-  // From the supplied HWE Glass Image Band template. background-size:cover is a
-  // discrete keyword and will not tween, so cover is recomputed as a numeric %
-  // that can animate; the keyword is handed back once the pointer leaves.
-  if (!reduce) {
-    Array.prototype.forEach.call(document.querySelectorAll('.imgband'), function (el) {
-      var src = getComputedStyle(el).backgroundImage || el.style.backgroundImage || '';
-      var m = /url\(["']?(.*?)["']?\)/.exec(src);
-      if (!m) return;
+  /* --- image bands: scroll parallax with progressive zoom ---------------- */
+  // Replaces the template's hover parallax. Each band's photo sits on its own
+  // layer that is 120% tall with a -10% offset, so it can drift 10% of the band
+  // height either way without an edge showing; DRIFT stays under that. The zoom
+  // only ever scales up, which adds cover margin rather than removing it.
+  var bandLayers = document.querySelectorAll('.imgband__bg, .band > img');
+  if (bandLayers.length && !reduce) {
+    var DRIFT = 0.08, ZOOM = 0.12, bandsQueued = false;
 
-      var ratio = 0, probe = new Image();
-      probe.onload = function () { ratio = probe.naturalWidth / probe.naturalHeight; };
-      probe.src = m[1];
-
-      var EASE = 'cubic-bezier(.16,1,.3,1)', ZOOM = 1.14, base = 0;
-      el.style.transition = 'background-size .6s ' + EASE + ', background-position .45s ' + EASE;
-      el.style.willChange = 'background-size, background-position';
-
-      function coverPct() {
-        var r = el.getBoundingClientRect();
-        if (!ratio || !r.width) return 100;
-        return 100 * Math.max(1, ratio / (r.width / r.height));
-      }
-      el.addEventListener('mouseenter', function () {
-        base = coverPct();
-        el.style.backgroundSize = base + '%';
-        requestAnimationFrame(function () { el.style.backgroundSize = (base * ZOOM) + '%'; });
+    function paintBands() {
+      bandsQueued = false;
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      Array.prototype.forEach.call(bandLayers, function (layer) {
+        var r = layer.parentNode.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;            // band is off-screen
+        var p = (vh - r.top) / (vh + r.height);            // 0 entering, 1 leaving
+        p = p < 0 ? 0 : (p > 1 ? 1 : p);
+        var y = (p - 0.5) * 2 * DRIFT * r.height;          // positive = lags the page
+        layer.style.transform = 'translate3d(0,' + y.toFixed(2) + 'px,0) scale(' +
+          (1 + ZOOM * p).toFixed(4) + ')';
       });
-      el.addEventListener('mousemove', function (e) {
-        var r = el.getBoundingClientRect();
-        var dx = (e.clientX - r.left) / r.width - 0.5;
-        var dy = (e.clientY - r.top) / r.height - 0.5;
-        el.style.backgroundPosition = (50 - dx * 16) + '% ' + (50 - dy * 16) + '%';
-      });
-      el.addEventListener('mouseleave', function () {
-        el.style.backgroundSize = (base || coverPct()) + '%';
-        el.style.backgroundPosition = '50% 50%';
-        setTimeout(function () {
-          if (!el.matches(':hover')) { el.style.backgroundSize = ''; el.style.backgroundPosition = ''; }
-        }, 640);
-      });
-      // a measured cover-% is only valid at that size, so release it on resize
-      window.addEventListener('resize', function () {
-        if (!el.matches(':hover')) { el.style.backgroundSize = ''; el.style.backgroundPosition = ''; }
-      });
-    });
+    }
+    function queueBands() {
+      if (!bandsQueued) { bandsQueued = true; requestAnimationFrame(paintBands); }
+    }
+    paintBands();
+    window.addEventListener('scroll', queueBands, { passive: true });
+    window.addEventListener('resize', queueBands);
   }
 
   /* --- annotated aerial: click to zoom, move to pan ---------------------- */

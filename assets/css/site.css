@@ -352,7 +352,11 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
    FULL-BLEED BANDS
    ========================================================================= */
 .band{ position:relative; height:clamp(300px,46vw,620px); overflow:hidden; background:var(--ink-deep); }
-.band img{ width:100%; height:100%; object-fit:cover; }
+/* 120% tall with a -10% offset so the layer can drift without exposing an edge */
+.band > img{
+  position:absolute; left:0; right:0; top:-10%; width:100%; height:120%;
+  object-fit:cover; will-change:transform;
+}
 /* =========================================================================
    GLASS IMAGE BAND
    From the supplied "HWE Glass Image Band" template (extracted from the Hyatt
@@ -374,11 +378,16 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
   --band-fallback:#3a322d;
 }
 .imgband{
-  position:relative; z-index:1;
+  position:relative; z-index:1; overflow:hidden;
   height:clamp(var(--band-h-min),var(--band-h-fluid),var(--band-h-max));
   background-color:var(--band-fallback);
-  background-size:cover; background-position:center; background-repeat:no-repeat;
   display:grid; place-items:center;
+}
+/* the photo lives on its own layer so it can be transformed under the plate */
+.imgband__bg{
+  position:absolute; left:0; right:0; top:-10%; height:120%; z-index:0;
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+  will-change:transform;
 }
 .imgband__label{
   /* the band is display:grid / place-items:center, so let it do the centring.
@@ -407,13 +416,9 @@ html,body{ hyphens:none; -webkit-hyphens:none; }
 }
 /* soften a busy photo under the plate */
 .imgband.scrim::before{
-  content:""; position:absolute; inset:0; pointer-events:none;
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
   background:linear-gradient(180deg,rgba(0,0,0,0) 18%,rgba(0,0,0,.22) 50%,rgba(0,0,0,0) 82%);
 }
-@media (prefers-reduced-motion:reduce){
-  .imgband{ transition:none !important; }
-}
-
 /* =========================================================================
    PROPERTY BLOCKS
    ========================================================================= */
