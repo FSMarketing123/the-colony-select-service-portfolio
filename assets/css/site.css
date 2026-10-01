@@ -899,25 +899,15 @@ button.fig:hover .fig__zoom,button.fig:focus-visible .fig__zoom{ opacity:1; tran
 }
 /* IH 05 / IH 07 — equal columns, heading sitting in the first one */
 .closing--even{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
-/* IH 06: media sits in the first column, so mirror the ratio; the card
-   stretches to that column's full height, flush top and bottom */
+/* IH 06: media sits in the first column, so mirror the ratio; the copy
+   column stretches to that column's full height and centres against it */
 .closing--flip{ align-items:stretch; grid-template-columns:minmax(0,1.12fr) minmax(0,1fr); }
-.closing--flip > .rv:not(.closing__media){ display:flex; }
-.closing--flip .card-panel{
-  flex:1; display:flex; flex-direction:column; justify-content:center;
+.closing--flip > .rv:not(.closing__media){
+  display:flex; flex-direction:column; justify-content:center;
 }
 .closing--flip > .closing__media{ order:-1; }
 @media (max-width:920px){ .closing{ grid-template-columns:1fr; } .closing--flip > .closing__media{ order:0; } }
 .closing__media{ display:grid; gap:clamp(12px,1.6vw,20px); grid-template-columns:minmax(0,1fr); align-content:start; }
-.card-panel{
-  background:var(--white); padding:clamp(24px,3vw,42px); box-shadow:var(--shadow-card);
-  color:var(--txt);
-}
-.card-panel .h2{ color:var(--ink-2); }
-.card-panel--slate{ background:var(--slate); color:var(--txt-invert); }
-.card-panel--slate .h2{ color:#fff; }
-.card-panel--round{ border-radius:14px; }
-
 /* =========================================================================
    FOOTER
    ========================================================================= */
