@@ -899,12 +899,16 @@ button.fig:hover .fig__zoom,button.fig:focus-visible .fig__zoom{ opacity:1; tran
 }
 /* IH 05 / IH 07 — equal columns, heading sitting in the first one */
 .closing--even{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
-/* IH 06: media sits in the first column, so mirror the ratio; the copy
-   column stretches to that column's full height and centres against it */
-.closing--flip{ align-items:stretch; grid-template-columns:minmax(0,1.12fr) minmax(0,1fr); }
-.closing--flip > .rv:not(.closing__media){
+/* IH 06: media sits in the first column, so mirror the ratio */
+.closing--flip{ grid-template-columns:minmax(0,1.12fr) minmax(0,1fr); }
+/* IH 05 / 06 / 07 share one copy treatment: the column stretches to the media's
+   height and centres against it, with a tighter gap under the heading */
+.closing--flip,.closing--even{ align-items:stretch; }
+.closing--flip > .rv:not(.closing__media),
+.closing--even > .rv:not(.closing__media){
   display:flex; flex-direction:column; justify-content:center;
 }
+.closing--flip .sechead,.closing--even .sechead{ margin-bottom:20px; }
 .closing--flip > .closing__media{ order:-1; }
 @media (max-width:920px){ .closing{ grid-template-columns:1fr; } .closing--flip > .closing__media{ order:0; } }
 .closing__media{ display:grid; gap:clamp(12px,1.6vw,20px); grid-template-columns:minmax(0,1fr); align-content:start; }
