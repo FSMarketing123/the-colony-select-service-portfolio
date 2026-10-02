@@ -10,8 +10,11 @@
   var topbar = document.querySelector('.topbar');
   var navLinks = Array.prototype.slice.call(document.querySelectorAll('.topnav a'));
 
+  // solid as soon as the page moves; the few px of slack keep the bar from
+  // flickering on a trackpad's sub-pixel jitter at the very top
+  var SOLID_AT = 4;
   function onScroll() {
-    if (topbar) topbar.classList.toggle('is-solid', window.scrollY > window.innerHeight * 0.72);
+    if (topbar) topbar.classList.toggle('is-solid', window.scrollY > SOLID_AT);
   }
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
