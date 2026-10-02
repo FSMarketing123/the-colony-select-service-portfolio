@@ -13,10 +13,34 @@
   // solid as soon as the page moves; the few px of slack keep the bar from
   // flickering on a trackpad's sub-pixel jitter at the very top
   var SOLID_AT = 4;
-  function onScroll() {
-    if (topbar) topbar.classList.toggle('is-solid', window.scrollY > SOLID_AT);
+  var topLogo = topbar ? topbar.querySelector('.hwe') : null;
+
+  // The bar swaps grid templates (rule | logo | rule  ->  logo | nav) and grid
+  // tracks cannot tween, so the logo used to jump from centre to left. FLIP it:
+  // read where the logo is, apply the class, then translate it back to where it
+  // was and let that translate animate away. Reading `first` after clearing any
+  // in-flight transform keeps a fast scroll up-and-down from snapping.
+  function setSolid(on) {
+    if (!topbar || topbar.classList.contains('is-solid') === on) return;
+    if (!topLogo || reduce) { topbar.classList.toggle('is-solid', on); return; }
+
+    var first = topLogo.getBoundingClientRect();
+    topLogo.style.transition = 'none';
+    topLogo.style.transform = 'none';
+    topbar.classList.toggle('is-solid', on);
+    var last = topLogo.getBoundingClientRect();
+
+    var dx = first.left - last.left, dy = first.top - last.top;
+    topLogo.style.transform = 'translate(' + dx.toFixed(2) + 'px,' + dy.toFixed(2) + 'px)';
+    void topLogo.offsetWidth;                      // commit that as the start frame
+    topLogo.style.transition = 'transform .45s var(--ease)';
+    topLogo.style.transform = '';
   }
-  onScroll();
+
+  function onScroll() { setSolid(window.scrollY > SOLID_AT); }
+
+  // the state the page loads in should not animate
+  if (topbar) topbar.classList.toggle('is-solid', window.scrollY > SOLID_AT);
   window.addEventListener('scroll', onScroll, { passive: true });
 
   if (navLinks.length && 'IntersectionObserver' in window) {
